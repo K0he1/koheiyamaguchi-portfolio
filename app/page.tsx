@@ -26,10 +26,10 @@ export default function Home() {
         <div className="hero-layout">
           <div className="hero-content">
             <p className="eyebrow">SOFTWARE / CLOUD / LEARNING</p>
-            <h1>K's Home Page</h1>
+            <h1>K&apos;s Home Page</h1>
             <p className="hero-copy">
-              PwC JapanでSoftware Developerとして働きながら，WebアプリケーションとGenAIを使った，
-              実際に役立つプロダクトをつくっています．個人では，FXや先物のクオンツトレードにも取り組んでいます．
+              PwC JapanでSoftware Developerとして働きながら，GenAIを活用したWebアプリを作っています．
+              個人では，FXや先物のクオンツトレードにも取り組んでいます．
             </p>
             <div className="hero-links">
               <a className="button button-primary" href="#projects">Portfolio</a>
