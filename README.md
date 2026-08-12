@@ -1,6 +1,6 @@
 # koheiyamaguchi-portfolio
 
-Kohei Yamaguchiのプロフィールと制作物を紹介するポートフォリオサイトです。
+Kohei Yamaguchiのプロフィールと制作物を紹介するポートフォリオサイトです．
 
 ## 開発
 
@@ -11,4 +11,4 @@ pnpm dev
 
 ## Azureリソース
 
-Azure Static Web Appsのリソースは`infra/environments/prod/`でTerraform管理します。
+Azure Static Web Appsのリソースは`infra/environments/prod/`でTerraform管理します．
