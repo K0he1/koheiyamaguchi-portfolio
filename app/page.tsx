@@ -110,6 +110,8 @@ export default function Home() {
       <footer className="site-footer">
         <span>© {new Date().getFullYear()} Kohei Yamaguchi</span>
         <span className="footer-links">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
           <a href="https://github.com/K0he1" target="_blank" rel="noreferrer">GitHub ↗</a>
           <a href="https://www.linkedin.com/in/kohei-yamaguchi-06429827a/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
         </span>
