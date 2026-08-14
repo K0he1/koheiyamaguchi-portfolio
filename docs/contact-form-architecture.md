@@ -183,6 +183,7 @@ Azure Communication ServicesのEmail Communication Serviceを作成し、Azure�
 - メールアドレスをサーバー側でも検証する
 - honeypotを設置する
 - 同一IPからの連続送信を制限する
+- フロント側は送信成功後60秒、API側はIPごとに30分5通までに制限する
 - エラー内容に内部設定やメールアドレスを含めない
 - Cost alertsを設定して、想定外の大量実行を通知する
 
@@ -204,6 +205,8 @@ APIを含む本番に近い確認では、Azure Static Web Apps CLIなどのロ�
 - honeypot入力を拒否する
 - 受信先アドレスがHTML、JavaScript、レスポンスに含まれない
 - 連続送信を制限できる
+
+現在のAPI側のIPカウンターはFunctionインスタンスのメモリ上で管理する。インスタンスの再起動やスケールアウト時にはカウンターが共有されないため、アクセスが増えた場合はAzure Table Storageなどの永続ストアへ移行する。
 
 ## 7. 実装順序
 

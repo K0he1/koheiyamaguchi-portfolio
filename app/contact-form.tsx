@@ -1,15 +1,41 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type FormStatus = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [cooldownUntil, setCooldownUntil] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!cooldownUntil) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      const currentTime = Date.now();
+      setNow(currentTime);
+
+      if (cooldownUntil <= currentTime) {
+        window.clearInterval(timer);
+        setCooldownUntil(null);
+      }
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownUntil]);
+
+  const cooldownSeconds = cooldownUntil ? Math.max(0, Math.ceil((cooldownUntil - now) / 1000)) : 0;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (cooldownSeconds > 0) {
+      return;
+    }
+
     setStatus("sending");
     setErrorMessage("");
 
@@ -36,6 +62,8 @@ export default function ContactForm() {
 
       form.reset();
       setStatus("success");
+      setCooldownUntil(Date.now() + 60_000);
+      setNow(Date.now());
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "送信に失敗しました。");
       setStatus("error");
@@ -64,8 +92,8 @@ export default function ContactForm() {
         <input id="contact-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <button className="button contact-submit" type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "送信中…" : "送信する"}
+      <button className="button contact-submit" type="submit" disabled={status === "sending" || cooldownSeconds > 0}>
+        {status === "sending" ? "送信中…" : cooldownSeconds > 0 ? `再送信まで${cooldownSeconds}秒` : "送信する"}
       </button>
 
       <p className="contact-status" aria-live="polite" data-state={status}>

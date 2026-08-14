@@ -3,17 +3,49 @@ import { EmailClient } from "@azure/communication-email";
 
 const MAX_NAME_LENGTH = 100;
 const MAX_MESSAGE_LENGTH = 5000;
+const RATE_LIMIT_WINDOW_MS = 30 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map();
 
-function jsonResponse(body, status = 200) {
+function jsonResponse(body, status = 200, additionalHeaders = {}) {
   return {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...additionalHeaders },
     jsonBody: body,
   };
 }
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !/[\r\n]/.test(email);
+}
+
+function getClientIp(request) {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const clientIp = request.headers.get("x-client-ip");
+  return (forwardedFor?.split(",")[0] ?? clientIp ?? "unknown").trim() || "unknown";
+}
+
+function checkRateLimit(clientIp, now = Date.now()) {
+  for (const [key, entry] of rateLimitStore) {
+    if (now >= entry.windowStartedAt + RATE_LIMIT_WINDOW_MS) {
+      rateLimitStore.delete(key);
+    }
+  }
+
+  const current = rateLimitStore.get(clientIp);
+
+  if (!current || now >= current.windowStartedAt + RATE_LIMIT_WINDOW_MS) {
+    rateLimitStore.set(clientIp, { count: 1, windowStartedAt: now });
+    return { allowed: true };
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfterSeconds = Math.ceil((current.windowStartedAt + RATE_LIMIT_WINDOW_MS - now) / 1000);
+    return { allowed: false, retryAfterSeconds };
+  }
+
+  current.count += 1;
+  return { allowed: true };
 }
 
 async function sendContactEmail({ name, email, message }) {
@@ -70,6 +102,15 @@ app.http("contact", {
 
     if (!name || name.length > MAX_NAME_LENGTH || !isValidEmail(email) || !message || message.length > MAX_MESSAGE_LENGTH) {
       return jsonResponse({ message: "入力内容を確認してください。" }, 400);
+    }
+
+    const rateLimit = checkRateLimit(getClientIp(request));
+    if (!rateLimit.allowed) {
+      return jsonResponse(
+        { message: "送信回数の上限に達しました。時間を置いて再度お試しください。" },
+        429,
+        { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      );
     }
 
     try {
