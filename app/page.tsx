@@ -105,7 +105,7 @@ export default function Home() {
         <p className="eyebrow">CONTACT</p>
         <h2>Contact</h2>
         <p className="section-copy">
-          仕事の依頼や制作物についてのお問い合わせはこちらから。送信された内容は、回答のためGmail APIを通じてサイト管理者へ届けられます。
+          仕事の依頼や制作物についてのお問い合わせはこちらから。送信された内容は、回答のためAzure Communication Services Emailを通じてサイト管理者へ届けられます。
         </p>
         <ContactForm />
         <p className="contact-privacy-note">

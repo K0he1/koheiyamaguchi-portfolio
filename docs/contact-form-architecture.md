@@ -1,6 +1,6 @@
 # Contact form architecture
 
-このメモでは、ポートフォリオのトップページに問い合わせフォームを追加し、送信内容を自分のGmailへ転送する構成を整理する。
+このメモでは、ポートフォリオのトップページに問い合わせフォームを追加し、Azure Communication Services Emailで送信内容を通知する構成を整理する。
 
 ## 1. 目指す全体像
 
@@ -13,13 +13,13 @@ Azure Static Web Apps
   ├─ Next.jsの静的フロントエンド
   └─ Managed Azure Functions（HTTP API）
         │
-        │  Gmail APIで送信
+        │  Azure Communication Services Emailで送信
         ▼
-自分のGmail
+サイト管理者のメールボックス
 ```
 
-ブラウザからGmailへ直接送信するのではなく、Azure Functionsを中継する。
-ブラウザが知るのは`/api/contact`というAPIのURLだけで、受信先のGmailアドレスやGmailの認証情報は公開しない。
+ブラウザからメールサービスへ直接送信するのではなく、Azure Functionsを中継する。
+ブラウザが知るのは`/api/contact`というAPIのURLだけで、受信先のメールアドレスやAzureの認証情報は公開しない。
 
 このフォームでは、常駐するWeb APIサーバーを用意しない。問い合わせが来たときだけHTTPトリガーのFunctionが起動し、処理が終わると実行も終了する。
 
@@ -29,7 +29,7 @@ Azure Static Web Apps
 2. 名前、メールアドレス、問い合わせ本文を入力する。
 3. Next.jsのフォームから`POST /api/contact`を呼び出す。
 4. Azure Functionsが入力値、文字数、honeypotを検証する。
-5. 問題がなければGmail APIで自分のGmailへメールを送信する。
+5. 問題がなければAzure Communication Services Emailでサイト管理者へメールを送信する。
 6. ブラウザには成功メッセージだけを返す。
 
 初期版では問い合わせ内容をデータベースに保存しない。必要になった時点で、Azure Table Storageなどを追加する。
@@ -117,33 +117,21 @@ api/
 2. JSONを読み込む
 3. 必須項目と文字数を検証する
 4. honeypotに値があればbotとして拒否する
-5. Gmail APIを呼び出す
-6. ブラウザにはGmailアドレスを含めず、成功または一般的なエラーだけ返す
+5. Azure Communication Services Emailを呼び出す
+6. ブラウザには受信先アドレスを含めず、成功または一般的なエラーだけ返す
 
-最初からGmail送信まで作らず、以下の順番で確認すると理解しやすい。
+最初からメール送信まで作らず、以下の順番で確認すると理解しやすい。
 
 ```text
 Phase 1: FunctionがJSONを受け取り、固定の成功レスポンスを返す
 Phase 2: 入力検証とhoneypotを追加する
-Phase 3: Gmail APIでメールを送信する
+Phase 3: Azure Communication Services Emailでメールを送信する
 Phase 4: 送信回数制限と監視を追加する
 ```
 
 ### 3.5 `api/package.json`
 
-API用の依存関係をフロントエンドと分離する。Gmail APIを使う段階で`googleapis`を追加する。
-
-```json
-{
-  "private": true,
-  "dependencies": {
-    "@azure/functions": "^4.0.0",
-    "googleapis": "^150.0.0"
-  }
-}
-```
-
-実際に追加するバージョンは、インストール時点で安定版を確認して固定する。
+API用の依存関係をフロントエンドと分離する。`@azure/communication-email`を追加し、Azure Communication Services Emailの`EmailClient`を利用する。
 
 ### 3.6 `.github/workflows/deploy.yml`
 
@@ -167,31 +155,30 @@ skip_app_build: true
 
 ### 3.7 Azureのアプリ設定
 
-Gmailの宛先や認証情報は、コードやGitHubリポジトリに書かない。Azure Static Web AppsのConfiguration / Environment variablesに登録する。
+メールの宛先やAzure Communication Servicesの認証情報は、コードやGitHubリポジトリに書かない。Azure Static Web AppsのConfiguration / Environment variablesに登録する。
 
 例:
 
 ```text
 CONTACT_TO_EMAIL
-GMAIL_CLIENT_ID
-GMAIL_CLIENT_SECRET
-GMAIL_REFRESH_TOKEN
+ACS_EMAIL_CONNECTION_STRING
+ACS_SENDER_ADDRESS
 ```
 
-値はローカルの`api/local.settings.json`にも置けるが、`.gitignore`でcommit対象外にする。ブラウザへ返すレスポンスやフロントエンドの環境変数には、`CONTACT_TO_EMAIL`を含めない。
+`ACS_EMAIL_CONNECTION_STRING`はAzure Communication Servicesの接続文字列、`ACS_SENDER_ADDRESS`はEmail Communication Serviceに紐付けた送信元アドレスである。値はローカルの`api/local.settings.json`にも置けるが、`.gitignore`でcommit対象外にする。ブラウザへ返すレスポンスやフロントエンドの環境変数には、`CONTACT_TO_EMAIL`を含めない。
 
-ローカル設定は`api/local.settings.json.example`をコピーして作る。Azureへは、Static Web AppsのConfiguration / Environment variablesに同じ4つの値を登録する。GitHub ActionsのRepository secretに登録するデプロイトークンとは別の設定である。
+ローカル設定は`api/local.settings.json.example`をコピーして作る。Azureへは、Static Web AppsのConfiguration / Environment variablesに3つの値を登録する。GitHub ActionsのRepository secretに登録するデプロイトークンとは別の設定である。
 
-## 4. Gmail送信方式
+## 4. Azure Communication Services Email
 
-第一候補はGmail APIである。送信専用のOAuthスコープを使い、Azure Functionsの環境変数にrefresh tokenを保管する。
+Azure Communication ServicesのEmail Communication Serviceを作成し、Azure管理ドメインまたは所有ドメインを接続する。接続文字列と送信元アドレスをAzureの環境変数へ登録し、APIから`EmailClient.beginSend`を呼び出す。
 
-SMTP + Gmailアプリパスワードでも実装できるが、アプリパスワードの管理範囲が広くなりやすい。学習用の簡易版として使う場合も、2段階認証を有効にし、パスワードをコードに書かない。
+問い合わせ者のアドレスは`Reply-To`に設定する。送信元はAzureの検証済みアドレスを使いながら、受信後に問い合わせ者へ返信できる。
 
 ## 5. セキュリティと運用
 
-- `mailto:`でGmailアドレスを公開しない
-- Gmail APIの秘密情報をGitHub SecretsまたはAzureの環境変数に置く
+- `mailto:`で受信先メールアドレスを公開しない
+- Azure Communication Servicesの接続文字列をGitHub SecretsまたはAzureの環境変数に置く
 - 入力文字数を制限する
 - メールアドレスをサーバー側でも検証する
 - honeypotを設置する
@@ -215,7 +202,7 @@ APIを含む本番に近い確認では、Azure Static Web Apps CLIなどのロ�
 - 必須項目が空の場合に送信できない
 - 不正なメールアドレスを拒否する
 - honeypot入力を拒否する
-- GmailアドレスがHTML、JavaScript、レスポンスに含まれない
+- 受信先アドレスがHTML、JavaScript、レスポンスに含まれない
 - 連続送信を制限できる
 
 ## 7. 実装順序
@@ -228,7 +215,7 @@ APIを含む本番に近い確認では、Azure Static Web Apps CLIなどのロ�
 6. `deploy.yml`の`api_location`を設定する
 7. ローカルでフォームからAPIを呼ぶ
 8. `api/local.settings.json`でローカルの環境変数を設定する
-9. Gmail API送信処理を追加する
+9. Azure Communication Services Email送信処理を追加する
 10. Azure Static Web AppsのEnvironment variablesに本番の環境変数を設定する
 11. GitHub Actionsでデプロイし、実際に受信できることを確認する
 
@@ -236,3 +223,4 @@ APIを含む本番に近い確認では、Azure Static Web Apps CLIなどのロ�
 
 - [Azure Static Web AppsにAPIを追加する](https://learn.microsoft.com/en-us/azure/static-web-apps/add-api)
 - [Static Web Appsのビルド設定](https://learn.microsoft.com/en-us/azure/static-web-apps/build-configuration)
+- [Azure Communication Services Emailでメールを送信する](https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email)

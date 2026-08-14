@@ -18,3 +18,12 @@ output "static_web_app_api_key" {
   value       = azurerm_static_web_app.app.api_key
   sensitive   = true
 }
+
+output "acs_connection_string" {
+  value     = azurerm_communication_service.portfolio.primary_connection_string
+  sensitive = true
+}
+
+output "acs_sender_address" {
+  value = "donotreply@${azurerm_email_communication_service_domain.azure_managed.mail_from_sender_domain}"
+}

@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+import { EmailClient } from "@azure/communication-email";
 
 const MAX_NAME_LENGTH = 100;
 const MAX_MESSAGE_LENGTH = 5000;
@@ -15,77 +16,33 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !/[\r\n]/.test(email);
 }
 
-function toBase64Url(value) {
-  return Buffer.from(value)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-async function getAccessToken() {
-  const clientId = process.env.GMAIL_CLIENT_ID;
-  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
-  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
-
-  if (!clientId || !clientSecret || !refreshToken) {
-    throw new Error("Gmail credentials are not configured.");
-  }
-
-  const response = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      refresh_token: refreshToken,
-      grant_type: "refresh_token",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Gmail token request failed with status ${response.status}.`);
-  }
-
-  const body = await response.json();
-  if (!body.access_token) {
-    throw new Error("Gmail access token was not returned.");
-  }
-
-  return body.access_token;
-}
-
 async function sendContactEmail({ name, email, message }) {
   const recipient = process.env.CONTACT_TO_EMAIL;
-  if (!recipient || !isValidEmail(recipient)) {
+  const sender = process.env.ACS_SENDER_ADDRESS;
+  const connectionString = process.env.ACS_EMAIL_CONNECTION_STRING;
+
+  if (!recipient || !isValidEmail(recipient) || !sender || !isValidEmail(sender)) {
     throw new Error("Contact recipient is not configured.");
   }
 
-  const accessToken = await getAccessToken();
-  const rawMessage = [
-    `From: ${recipient}`,
-    `To: ${recipient}`,
-    `Reply-To: ${email}`,
-    "Subject: Portfolio contact form",
-    "Content-Type: text/plain; charset=UTF-8",
-    "",
-    `Name: ${name}`,
-    `Email: ${email}`,
-    "",
-    message,
-  ].join("\r\n");
+  if (!connectionString) {
+    throw new Error("Azure Communication Services credentials are not configured.");
+  }
 
-  const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+  const emailClient = new EmailClient(connectionString);
+  const poller = await emailClient.beginSend({
+    senderAddress: sender,
+    recipients: { to: [{ address: recipient }] },
+    replyTo: [{ address: email }],
+    content: {
+      subject: "Portfolio contact form",
+      plainText: [`Name: ${name}`, `Email: ${email}`, "", message].join("\n"),
     },
-    body: JSON.stringify({ raw: toBase64Url(rawMessage) }),
   });
+  const result = await poller.pollUntilDone();
 
-  if (!response.ok) {
-    throw new Error(`Gmail send request failed with status ${response.status}.`);
+  if (result.status !== "Succeeded") {
+    throw new Error(`Azure Communication Services email failed with status ${result.status}.`);
   }
 }
 

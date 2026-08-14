@@ -43,7 +43,7 @@ export default function PrivacyPage() {
         <section className="legal-section">
           <h2>3. 外部サービスの利用</h2>
           <p>
-            お問い合わせ内容の送信には、Azure Static Web Apps上のAPIとGmail APIを利用します。入力内容は、問い合わせへの回答に必要な範囲で、サイト管理者のメールボックスへ送信されます。
+            お問い合わせ内容の送信には、Azure Static Web Apps上のAPIとAzure Communication Services Emailを利用します。入力内容は、問い合わせへの回答に必要な範囲で、サイト管理者のメールボックスへ送信されます。
           </p>
           <p>
             本サイトでは、広告配信やアクセス解析を目的とした第三者サービスは現在利用していません。

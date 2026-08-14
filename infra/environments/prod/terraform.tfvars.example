@@ -1,2 +1,3 @@
-subscription_id     = "00000000-0000-0000-0000-000000000000"
-static_web_app_name = "swa-kohei-portfolio-prod-01"
+subscription_id     = ""
+resource_group_name = ""
+static_web_app_name = ""
