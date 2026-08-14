@@ -30,6 +30,7 @@ export default function Home() {
             <p className="eyebrow">SOFTWARE / CLOUD / LEARNING</p>
             <h1>K&apos;s Home Page</h1>
             <p className="hero-copy">
+              K&apos;s Home Pageは、プロフィールや制作物を紹介し、お問い合わせを受け付けるポートフォリオサイトです。
               PwC JapanでSoftware Developerとして働きながら，GenAIを活用したWebアプリを作っています．
               個人では，FXや先物のクオンツトレードにも取り組んでいます．
             </p>
@@ -103,8 +104,13 @@ export default function Home() {
       <section className="section" id="contact">
         <p className="eyebrow">CONTACT</p>
         <h2>Contact</h2>
-        <p className="section-copy">仕事の依頼や制作物についてのお問い合わせはこちらから。</p>
+        <p className="section-copy">
+          仕事の依頼や制作物についてのお問い合わせはこちらから。送信された内容は、回答のためGmail APIを通じてサイト管理者へ届けられます。
+        </p>
         <ContactForm />
+        <p className="contact-privacy-note">
+          個人情報の取り扱いについては、<a href="/privacy">プライバシーポリシー</a>をご確認ください。
+        </p>
       </section>
 
       <footer className="site-footer">
