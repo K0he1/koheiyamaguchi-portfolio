@@ -17,3 +17,5 @@ crash.*.log
 .env
 .env.*
 !.env.example
+
+api/local.settings.json

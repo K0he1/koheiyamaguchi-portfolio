@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ContactForm from "./contact-form";
 
 const projects = [
   {
@@ -17,6 +18,7 @@ export default function Home() {
         <nav aria-label="メインナビゲーション">
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
           <a href="https://github.com/K0he1" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/kohei-yamaguchi-06429827a/" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
@@ -96,6 +98,13 @@ export default function Home() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="section" id="contact">
+        <p className="eyebrow">CONTACT</p>
+        <h2>Contact</h2>
+        <p className="section-copy">仕事の依頼や制作物についてのお問い合わせはこちらから。</p>
+        <ContactForm />
       </section>
 
       <footer className="site-footer">
