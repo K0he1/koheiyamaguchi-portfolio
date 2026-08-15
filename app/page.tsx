@@ -7,6 +7,14 @@ const projects = [
     description: "祝日と有給休暇を考慮して，任意の月の営業日数を計算するWebアプリ．",
     stack: "Next.js / TypeScript / Azure Static Web Apps",
     url: "https://thankful-meadow-02df09f00.7.azurestaticapps.net",
+    status: "LIVE",
+  },
+  {
+    name: "洪水リスクの計算例",
+    description: "気候シナリオ，浸水深，被害率，期待被害額の関係を紹介する計算例ページ．",
+    stack: "Next.js / TypeScript / Terraform / Azure Static Web Apps",
+    url: "https://ashy-island-028b91e00.7.azurestaticapps.net/",
+    status: "LIVE",
   },
 ];
 
@@ -83,14 +91,14 @@ export default function Home() {
             <p className="eyebrow">PROJECTS</p>
             <h2>Portfolio</h2>
           </div>
-          <span className="project-count">{projects.length} project</span>
+          <span className="project-count">{projects.length} projects</span>
         </div>
         <div className="project-grid">
-          {projects.map((project) => (
+          {projects.map((project, index) => (
             <article className="project-card" key={project.name}>
               <div className="project-card-top">
-                <span className="project-number">01</span>
-                <span className="project-status">LIVE</span>
+                <span className="project-number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="project-status">{project.status}</span>
               </div>
               <h3>{project.name}</h3>
               <p>{project.description}</p>
