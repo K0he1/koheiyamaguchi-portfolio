@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー | K's Home Page",
-  description: "K's Home Pageにおける個人情報の取り扱いについて説明します。",
+  title: "プライバシーポリシー | K Lab Studio",
+  description: "K Lab Studioにおける個人情報の取り扱いについて説明します。",
 };
 
 export default function PrivacyPage() {

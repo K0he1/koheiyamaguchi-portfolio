@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "利用規約 | K's Home Page",
-  description: "K's Home Pageの利用規約です。",
+  title: "利用規約 | K Lab Studio",
+  description: "K Lab Studioの利用規約です。",
 };
 
 export default function TermsPage() {
