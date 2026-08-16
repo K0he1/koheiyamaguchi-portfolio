@@ -40,7 +40,7 @@ export default function Home() {
             <p className="hero-copy">
               K Lab Studioは、プロフィールや制作物を紹介し、お問い合わせを受け付けるポートフォリオサイトです。
               PwC JapanでSoftware Developerとして働きながら，GenAIを活用したWebアプリを作っています．
-              個人では，FXや先物のクオンツトレードにも取り組んでいます．
+              個人では，データ分析のスキルを活用したFX・株価指数先物のトレードにも取り組んでいます．
             </p>
             <div className="hero-links">
               <a className="button button-primary" href="#projects">Portfolio</a>
@@ -62,8 +62,8 @@ export default function Home() {
           テスト，クラウドへのデプロイなどをやっています．また，それらが実際にユーザーの課題解決や業務効率化に繋がることを意識しています．
 
           これまでData Scientistとして統計・データ分析に携わり，現在はSoftware Developerとして
-          Python，TypeScript，Azureなどを使った開発に取り組んでいます．個人ではFX・先物の
-          クオンツトレードを実践し，データとアルゴリズムを使った意思決定にも関心があります．
+          Python，TypeScript，Azureなどを使った開発に取り組んでいます．個人では定量的判断に基づくFX・株価指数先物の
+          トレードを行っており，データとアルゴリズムを使った意思決定にも関心があります．
         </p>
         <dl className="profile-facts">
           <div>
