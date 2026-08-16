@@ -38,9 +38,7 @@ export default function Home() {
             <p className="eyebrow">SOFTWARE / CLOUD / LEARNING</p>
             <h1>K Lab Studio</h1>
             <p className="hero-copy">
-              K Lab Studioは、プロフィールや制作物を紹介し、お問い合わせを受け付けるポートフォリオサイトです。
-              PwC JapanでSoftware Developerとして働きながら，GenAIを活用したWebアプリを作っています．
-              個人では，データ分析のスキルを活用したFX・株価指数先物のトレードにも取り組んでいます．
+              K Lab Studioは私のプロフィールや制作物を紹介しつつ、お問い合わせを受け付けるポートフォリオサイトです。
             </p>
             <div className="hero-links">
               <a className="button button-primary" href="#projects">Portfolio</a>
