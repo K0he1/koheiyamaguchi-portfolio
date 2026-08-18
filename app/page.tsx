@@ -56,12 +56,9 @@ export default function Home() {
         <p className="eyebrow">ABOUT</p>
         <h2>Profile</h2>
         <p className="section-copy">
-          AIを活用したアプリケーションを作っています．要件定義から設計，実装，
-          テスト，クラウドへのデプロイなどをやっています．また，それらが実際にユーザーの課題解決や業務効率化に繋がることを意識しています．
+          AIを活用したアプリケーションを作っています．要件定義から設計，実装，テスト，クラウドへのデプロイなどをやっています．また，それらが実際にユーザーの課題解決や業務効率化に繋がることを意識しています．
 
-          これまでData Scientistとして統計・データ分析に携わり，現在はSoftware Developerとして
-          Python，TypeScript，Azureなどを使った開発に取り組んでいます．個人では定量的判断に基づくFX・株価指数先物の
-          トレードを行っており，データとアルゴリズムを使った意思決定にも関心があります．
+          これまでData Scientistとして統計・データ分析に携わり，現在はSoftware DeveloperとしてPython，TypeScript，Azureなどを使った開発に取り組んでいます．個人では定量的判断に基づくFX・株価指数先物のトレードを行っており，データとアルゴリズムを使った意思決定にも関心があります．
         </p>
         <dl className="profile-facts">
           <div>
