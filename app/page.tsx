@@ -5,14 +5,12 @@ const projects = [
   {
     name: "日本の営業日カウンター",
     description: "祝日と有給休暇を考慮して，任意の月の営業日数を計算するWebアプリ．",
-    stack: "Next.js / TypeScript / Azure Static Web Apps",
     url: "https://thankful-meadow-02df09f00.7.azurestaticapps.net",
     status: "LIVE",
   },
   {
     name: "洪水リスクの計算例",
     description: "気候シナリオ，浸水深，被害率，期待被害額の関係を紹介する計算例ページ．",
-    stack: "Next.js / TypeScript / Terraform / Azure Static Web Apps",
     url: "https://ashy-island-028b91e00.7.azurestaticapps.net/",
     status: "LIVE",
   },
@@ -95,10 +93,8 @@ export default function Home() {
                 <span className="project-number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="project-status">{project.status}</span>
               </div>
-              <h3>{project.name}</h3>
+              <h3><a href={project.url} target="_blank" rel="noreferrer">{project.name}</a></h3>
               <p>{project.description}</p>
-              <span className="project-stack">{project.stack}</span>
-              <a className="project-link" href={project.url} target="_blank" rel="noreferrer">サイトを見る ↗</a>
             </article>
           ))}
         </div>

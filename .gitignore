@@ -19,3 +19,5 @@ crash.*.log
 !.env.example
 
 api/local.settings.json
+
+.DS_Store
