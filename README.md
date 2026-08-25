@@ -32,7 +32,7 @@ Webアプリ開発に必要なスキル[^1]を学ぶことと自身の制作物�
 
 日本の任意の月について、土日・祝日・有給休暇を考慮した営業日数を計算するWebアプリです。自分の勤怠管理のために必要なので作りました。
 
-- **公開サイト:** [営業日カウンターを開く](https://thankful-meadow-02df09f00.7.azurestaticapps.net)
+- **公開サイト:** [営業日カウンターを開く](https://business-day.k-lab-studio.com)
 <!-- - **ソースコード:** [K0he1/japan-businessday-count-app](https://github.com/K0he1/japan-businessday-count-app) -->
 - **技術:** Next.js / TypeScript / React / Vitest / Azure Static Web Apps
 - **主な機能:** 2000〜2030年の祝日対応、年月選択、月移動、有給休暇の登録、カレンダー表示
@@ -43,7 +43,7 @@ Webアプリ開発に必要なスキル[^1]を学ぶことと自身の制作物�
 
 2026年8月の千葉の洪水被害を見て、以前作った数理モデルで何か出来ないかと思い、作りました。
 
-- **公開サイト:** [洪水リスクページを開く](https://ashy-island-028b91e00.7.azurestaticapps.net/)
+- **公開サイト:** [洪水リスクページを開く](https://flood-risk.k-lab-studio.com)
 <!-- - **ソースコード:** [K0he1/flood-risk-simulator](https://github.com/K0he1/flood-risk-simulator) -->
 - **技術:** Next.js / TypeScript / Terraform / Azure Static Web Apps / Python
 - **主な内容:** 気候シナリオ、浸水深・被害率の表、期待被害額、前提条件、限界、不確実性

@@ -5,13 +5,13 @@ const projects = [
   {
     name: "日本の営業日カウンター",
     description: "祝日と有給休暇を考慮して，任意の月の営業日数を計算するWebアプリ．",
-    url: "https://thankful-meadow-02df09f00.7.azurestaticapps.net",
+    url: "https://business-day.k-lab-studio.com",
     status: "LIVE",
   },
   {
     name: "洪水リスクの計算例",
     description: "気候シナリオ，浸水深，被害率，期待被害額の関係を紹介する計算例ページ．",
-    url: "https://ashy-island-028b91e00.7.azurestaticapps.net/",
+    url: "https://flood-risk.k-lab-studio.com",
     status: "LIVE",
   },
 ];
